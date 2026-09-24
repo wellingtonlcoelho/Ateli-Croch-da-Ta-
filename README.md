@@ -11,10 +11,26 @@ amigurumi-loja/
 ├── style.css                        → visual do site
 ├── script.js                        → carrinho e lógica da página
 ├── products.js                      → SEU CATÁLOGO (edite aqui)
+├── schema.sql                       → estrutura do banco de dados (estoque e pedidos)
 ├── sucesso.html / pendente.html / erro.html  → páginas após o pagamento
-├── functions/api/create-preference.js  → integração segura com o Mercado Pago
+├── functions/api/create-preference.js  → cria o pagamento e checa estoque
+├── functions/api/webhook-mercadopago.js → confirma venda e avisa por e-mail
+├── functions/api/estoque.js         → informa quantidade disponível ao site
 └── images/                          → pasta para colocar as fotos dos produtos
 ```
+
+## O que o backend faz agora
+
+1. Ao clicar em "Finalizar compra", o site confere no banco de dados se
+   ainda há unidades daquele amigurumi antes de criar o pagamento.
+2. O pedido é gravado no banco com status "pendente".
+3. Quando o Mercado Pago confirma o pagamento (aprovado, recusado, etc.),
+   ele avisa automaticamente o site através de um webhook — isso funciona
+   mesmo que a cliente feche o navegador antes de voltar à loja.
+4. Se o pagamento for aprovado, um e-mail é enviado avisando você da venda.
+5. O estoque exibido no site (e o aviso "Esgotado") é sempre calculado a
+   partir das vendas realmente aprovadas — você não precisa atualizar
+   número nenhum manualmente depois de cada venda.
 
 ## Passo 1 — Editar seus produtos
 
@@ -74,7 +90,57 @@ Sem esse passo o botão "Finalizar compra" não funciona.
 5. Marque a opção de variável **secreta/encrypted**, se disponível
 6. Salve e clique em **Redeploy** (reimplantar) para a variável entrar em vigor
 
-## Passo 6 — Domínio próprio (opcional)
+## Passo 6 — Banco de dados (controle de estoque + histórico de pedidos)
+
+Isso é o que dá ao site memória: saber quanto ainda tem de cada peça e
+guardar o histórico de vendas.
+
+1. No painel da Cloudflare, vá em **Workers & Pages → D1 SQL Database → Create Database**
+2. Dê um nome (ex: `pontodela-db`) e crie
+3. Abra o banco criado e clique na aba **Console**
+4. Abra o arquivo `schema.sql` (está na pasta do projeto), copie todo o
+   conteúdo e cole no console. Clique em **Execute** — isso cria as
+   tabelas e já cadastra um estoque inicial de exemplo para cada produto.
+5. **Ajuste as quantidades reais**: ainda no console, rode um comando por
+   produto para corrigir a quantidade que você realmente tem feita, por
+   exemplo:
+   ```sql
+   UPDATE produtos_estoque SET estoque = 3 WHERE produto_id = 'p01';
+   ```
+6. Agora ligue esse banco ao seu site: no seu projeto dentro de
+   **Workers & Pages**, vá em **Settings → Functions → D1 database bindings
+   → Add binding**
+   - Variable name: `DB`
+   - D1 database: selecione o banco que você criou
+7. Clique em **Redeploy** no projeto para a ligação entrar em vigor
+
+**Quando adicionar um produto novo no `products.js`**, lembre de rodar no
+console do D1:
+```sql
+INSERT INTO produtos_estoque (produto_id, estoque) VALUES ('p16', 5);
+```
+(troque `'p16'` pelo id do novo produto e `5` pela quantidade feita)
+
+**Para ver seu histórico de vendas** a qualquer momento, no mesmo console:
+```sql
+SELECT * FROM pedidos ORDER BY criado_em DESC;
+```
+
+## Passo 7 — E-mail avisando quando vender (opcional)
+
+1. Crie uma conta gratuita em [resend.com](https://resend.com) (até 3.000
+   e-mails/mês grátis, mais que suficiente para começar)
+2. No painel do Resend, vá em **API Keys → Create API Key** e copie a chave
+3. Volte na Cloudflare, no seu projeto, em **Settings → Environment variables**,
+   adicione:
+   - `RESEND_API_KEY` → a chave copiada (marque como secreta)
+   - `SELLER_EMAIL` → o e-mail onde você quer receber o aviso de venda
+4. Clique em **Redeploy**
+
+Sem configurar isso, o site continua funcionando normalmente — só não
+manda o e-mail de aviso.
+
+## Passo 8 — Domínio próprio (opcional)
 
 Em **Custom domains**, dentro do seu projeto na Cloudflare Pages, você pode
 ligar um domínio próprio (ex: `pontodela.com.br`) se já tiver um registrado,
@@ -92,6 +158,16 @@ https://www.mercadopago.com.br/developers/pt/docs/checkout-pro/additional-conten
 **"Finalizar compra" dá erro.**
 Confira se a variável `MP_ACCESS_TOKEN` foi salva certinho na Cloudflare
 (Passo 5) e se você clicou em "Redeploy" depois de salvar.
+
+**Todos os produtos aparecem sem limite de estoque, mesmo depois de vender.**
+Confira se o banco D1 foi ligado ao projeto (Passo 6, item 6 — o vínculo
+chamado `DB`) e se você rodou o `schema.sql` no console do banco.
+
+**Vendi um item mas não recebi o e-mail de aviso.**
+Confira se `RESEND_API_KEY` e `SELLER_EMAIL` estão configurados (Passo 7).
+Sem eles o site funciona normalmente, só não manda o e-mail. Você também
+pode conferir se a venda foi mesmo aprovada olhando a tabela `pedidos`
+no console do D1.
 
 **Quero mudar as cores ou o texto do site.**
 As cores ficam no topo do arquivo `style.css` (variáveis como `--purple`,

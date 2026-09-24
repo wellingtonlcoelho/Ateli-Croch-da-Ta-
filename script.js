@@ -14,6 +14,28 @@ const ICONE_PADRAO = `
 const money = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 // ─────────────────────────────────────────────────────────
+// Estoque disponível (buscado do backend). Fica vazio ({}) se
+// o banco de dados ainda não estiver configurado — nesse caso
+// o site simplesmente não aplica nenhum limite de estoque.
+// ─────────────────────────────────────────────────────────
+let estoqueDisponivel = {};
+
+async function carregarEstoque() {
+  try {
+    const resp = await fetch('/api/estoque');
+    if (resp.ok) estoqueDisponivel = await resp.json();
+  } catch {
+    estoqueDisponivel = {};
+  }
+  renderizarGrid();
+}
+
+function disponivelPara(id) {
+  // undefined = produto sem controle de estoque cadastrado → sem limite
+  return estoqueDisponivel[id];
+}
+
+// ─────────────────────────────────────────────────────────
 // Estado do carrinho (salvo no navegador da pessoa)
 // ─────────────────────────────────────────────────────────
 let carrinho = JSON.parse(localStorage.getItem('carrinho') || '{}');
@@ -25,7 +47,15 @@ function salvarCarrinho() {
 }
 
 function adicionarAoCarrinho(id) {
-  carrinho[id] = (carrinho[id] || 0) + 1;
+  const disponivel = disponivelPara(id);
+  const jaNoCarrinho = carrinho[id] || 0;
+
+  if (disponivel !== undefined && jaNoCarrinho + 1 > disponivel) {
+    alert('Não há mais unidades disponíveis desse item.');
+    return;
+  }
+
+  carrinho[id] = jaNoCarrinho + 1;
   salvarCarrinho();
 }
 
@@ -90,20 +120,28 @@ function renderizarGrid() {
     ? PRODUTOS
     : PRODUTOS.filter(p => p.categoria === categoriaAtiva);
 
-  el.innerHTML = lista.map(p => `
+  el.innerHTML = lista.map(p => {
+    const disponivel = disponivelPara(p.id);
+    const esgotado = disponivel !== undefined && disponivel <= 0;
+    return `
     <div class="card">
       <div class="card-media">
         ${p.imagem ? `<img src="${p.imagem}" alt="${p.nome}">` : ICONE_PADRAO}
-        <span class="price-tag">${money(p.preco)}</span>
+        ${esgotado
+          ? `<span class="sold-out-tag">Esgotado</span>`
+          : `<span class="price-tag">${money(p.preco)}</span>`}
       </div>
       <div class="card-body">
         <div class="card-cat">${p.categoria}</div>
         <div class="card-title">${p.nome}</div>
         <div class="card-desc">${p.descricao}</div>
-        <button class="add-btn" data-id="${p.id}">Adicionar ao carrinho</button>
+        <button class="add-btn" data-id="${p.id}" ${esgotado ? 'disabled' : ''}>
+          ${esgotado ? 'Esgotado' : 'Adicionar ao carrinho'}
+        </button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   el.querySelectorAll('.add-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -200,6 +238,16 @@ document.getElementById('checkoutBtn').addEventListener('click', async () => {
       body: JSON.stringify({ itens })
     });
 
+    if (resp.status === 409) {
+      const erro = await resp.json();
+      alert(`"${erro.produto_nome}" agora só tem ${erro.disponivel} unidade(s) disponível(is). Ajuste a quantidade no carrinho.`);
+      await carregarEstoque();
+      renderizarCarrinho();
+      btn.disabled = false;
+      btn.textContent = 'Finalizar compra';
+      return;
+    }
+
     if (!resp.ok) throw new Error('Falha ao criar o pagamento');
 
     const data = await resp.json();
@@ -217,9 +265,40 @@ document.getElementById('checkoutBtn').addEventListener('click', async () => {
 });
 
 // ─────────────────────────────────────────────────────────
+// Preenche a seção "Sobre mim" e o botão de WhatsApp com os
+// dados definidos no arquivo contato.js
+// ─────────────────────────────────────────────────────────
+function preencherContato() {
+  if (typeof CONTATO === 'undefined') return;
+
+  const textoEl = document.getElementById('sobreTexto');
+  if (textoEl) textoEl.textContent = CONTATO.bio;
+
+  const linkInsta = document.getElementById('linkInstagram');
+  if (linkInsta) {
+    linkInsta.href = CONTATO.instagramUrl;
+    document.getElementById('instaTexto').textContent = CONTATO.instagramTexto;
+  }
+
+  const linkEmail = document.getElementById('linkEmail');
+  if (linkEmail) {
+    linkEmail.href = `mailto:${CONTATO.email}`;
+    document.getElementById('emailTexto').textContent = CONTATO.email;
+  }
+
+  const whatsappBtn = document.getElementById('whatsappFloat');
+  if (whatsappBtn) {
+    const mensagem = encodeURIComponent(CONTATO.whatsappMensagem || '');
+    whatsappBtn.href = `https://wa.me/${CONTATO.whatsapp}?text=${mensagem}`;
+  }
+}
+
+// ─────────────────────────────────────────────────────────
 // Inicialização
 // ─────────────────────────────────────────────────────────
+preencherContato();
 renderizarFiltros();
 renderizarGrid();
 atualizarContadores();
 renderizarCarrinho();
+carregarEstoque();
