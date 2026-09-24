@@ -1,4 +1,4 @@
-# Ponto de Lã — sua loja de amigurumi
+#  loja 
 
 Site completo: catálogo, carrinho e pagamento via Mercado Pago (Pix e cartão),
 pronto para publicar de graça na Cloudflare Pages.
