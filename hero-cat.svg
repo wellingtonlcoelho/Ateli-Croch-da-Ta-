@@ -1,68 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" role="img" aria-labelledby="title desc">
-  <title id="title">Gatinho crocheteiro</title>
-  <desc id="desc">Ilustração de um gatinho branco crocheteando, dentro de uma bola roxa com fio lilás.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%" role="img" aria-labelledby="title desc">
+  <title id="title">Gatinho fazendo crochê</title>
+  <desc id="desc">Gatinho branco fazendo crochê dentro de uma bola roxa, com novelo de lã ao lado.</desc>
+  <style>
+    .paw-left { animation: movePawL .6s infinite alternate ease-in-out; transform-origin: 195px 265px; }
+    .paw-right { animation: movePawR .6s infinite alternate-reverse ease-in-out; transform-origin: 270px 260px; }
+    .needle { animation: moveNeedle .6s infinite alternate ease-in-out; transform-origin: 235px 260px; }
+    @keyframes movePawL { 0% { transform: translateY(0) rotate(0); } 100% { transform: translateY(4px) rotate(-8deg); } }
+    @keyframes movePawR { 0% { transform: translateY(0) rotate(0); } 100% { transform: translateY(-4px) rotate(8deg); } }
+    @keyframes moveNeedle { 0% { transform: rotate(0) translateX(0); } 100% { transform: rotate(-4deg) translateX(-3px); } }
+    @media (prefers-reduced-motion: reduce) { .paw-left, .paw-right, .needle { animation: none; } }
+  </style>
 
-  <defs>
-    <linearGradient id="gradRoxo" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#AE8CCC"/>
-      <stop offset="100%" stop-color="#8D6DB3"/>
-    </linearGradient>
-    <linearGradient id="gradClaro" x1="0" x2="1">
-      <stop offset="0%" stop-color="#EDE3F0"/>
-      <stop offset="100%" stop-color="#DCCDEB"/>
-    </linearGradient>
-  </defs>
+  <rect width="500" height="500" fill="#f4ece7" />
+  <circle cx="250" cy="260" r="210" fill="#9376bc" />
+  <circle cx="410" cy="110" r="75" fill="#d5c6ea" />
 
-  <circle cx="250" cy="250" r="214" fill="url(#gradRoxo)"/>
-  <circle cx="382" cy="104" r="80" fill="url(#gradClaro)"/>
+  <polygon points="190,200 175,110 235,145" fill="#ffffff" />
+  <polygon points="310,200 325,110 265,145" fill="#ffffff" />
 
-  <g>
-    <path d="M177 167 L145 99 L208 127 Z" fill="#F8F5F6"/>
-    <path d="M323 167 L355 99 L292 127 Z" fill="#F8F5F6"/>
+  <g stroke="#ffffff" stroke-width="4" stroke-linecap="round">
+    <line x1="140" y1="205" x2="165" y2="210"/><line x1="140" y1="220" x2="165" y2="220"/><line x1="145" y1="235" x2="170" y2="228"/>
+    <line x1="360" y1="205" x2="335" y2="210"/><line x1="360" y1="220" x2="335" y2="220"/><line x1="355" y1="235" x2="330" y2="228"/>
+  </g>
 
-    <ellipse cx="250" cy="250" rx="107" ry="100" fill="#F8F5F6"/>
+  <ellipse cx="250" cy="215" rx="85" ry="70" fill="#ffffff" />
+  <circle cx="220" cy="205" r="7.5" fill="#2d273a" /><circle cx="280" cy="205" r="7.5" fill="#2d273a" />
+  <path d="M235 230 Q250 245 265 230" fill="none" stroke="#2d273a" stroke-width="4.5" stroke-linecap="round" />
 
-    <circle cx="214" cy="213" r="8" fill="#332741"/>
-    <circle cx="286" cy="213" r="8" fill="#332741"/>
+  <path d="M280 340 Q320 380 350 325" fill="none" stroke="#c4aee0" stroke-width="5" />
+  <circle cx="350" cy="315" r="24" fill="#c4aee0" />
+  <g fill="none" stroke="#ffffff" stroke-width="2.5" opacity=".6">
+    <path d="M333 303 Q350 295 367 310"/><path d="M330 320 Q350 335 370 318"/><path d="M345 292 Q340 315 355 338"/>
+  </g>
 
-    <g fill="none" stroke="#332741" stroke-width="4.5" stroke-linecap="round">
-      <path d="M178 218 L138 208"/>
-      <path d="M178 234 L133 232"/>
-      <path d="M178 250 L140 260"/>
-      <path d="M322 218 L362 208"/>
-      <path d="M322 234 L367 232"/>
-      <path d="M322 250 L360 260"/>
-    </g>
+  <path d="M215 275 L265 265 L285 340 L215 330 Z" fill="#c4aee0" />
+  <g stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity=".8">
+    <path d="M225 285 L230 290 L235 285 M245 282 L250 287 L255 282"/>
+    <path d="M228 302 L233 307 L238 302 M248 299 L253 304 L258 299 M268 296 L273 301 L278 296"/>
+    <path d="M230 318 L235 323 L240 318 M250 315 L255 320 L260 315 M270 312 L275 317 L280 312"/>
+  </g>
 
-    <path d="M224 262 C236 270 264 270 276 262" fill="none" stroke="#332741" stroke-width="6" stroke-linecap="round"/>
+  <g class="needle">
+    <line x1="175" y1="295" x2="235" y2="255" stroke="#3b2d42" stroke-width="7" stroke-linecap="round" />
+    <line x1="230" y1="260" x2="310" y2="295" stroke="#b28d54" stroke-width="7" stroke-linecap="round" />
+  </g>
 
-    <path d="M200 290 C168 294 151 314 156 332 C160 348 176 356 192 349 L230 328 L222 287 Z" fill="#F8F5F6"/>
-    <path d="M300 290 C332 294 349 314 344 332 C340 348 324 356 308 349 L270 328 L278 287 Z" fill="#F8F5F6"/>
-
-    <path d="M184 328 L172 370 L208 365 L220 332 Z" fill="#F8F5F6"/>
-    <path d="M316 328 L328 370 L292 365 L280 332 Z" fill="#F8F5F6"/>
-
-    <g transform="translate(175 302)">
-      <path d="M26 12 C12 0 18 -14 35 -11 C54 -8 64 9 64 24 C64 39 52 53 36 62 C24 68 11 66 5 56 C-2 46 1 28 26 12 Z" fill="#D7C9E8"/>
-      <g fill="none" stroke="#B69FDB" stroke-width="6" stroke-linecap="round">
-        <path d="M16 20 C30 30 47 31 60 20"/>
-        <path d="M14 38 C29 48 47 48 63 38"/>
-        <path d="M14 57 C29 67 46 67 63 57"/>
-      </g>
-      <path d="M32 8 L41 64 M50 6 L56 66 M66 12 L60 68" fill="none" stroke="#B69FDB" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
-    </g>
-
-    <g>
-      <path d="M228 325 L272 292" fill="none" stroke="#332741" stroke-width="7" stroke-linecap="round"/>
-      <path d="M272 292 L287 276" fill="none" stroke="#332741" stroke-width="7" stroke-linecap="round"/>
-      <path d="M228 325 L214 340" fill="none" stroke="#332741" stroke-width="7" stroke-linecap="round"/>
-      <path d="M272 292 L275 252" fill="none" stroke="#D8B057" stroke-width="6" stroke-linecap="round"/>
-    </g>
-
-    <g>
-      <circle cx="364" cy="358" r="42" fill="#F0E8F6"/>
-      <path d="M336 368 C346 336 379 334 394 359 C402 373 392 394 368 397 C347 400 337 385 336 368 Z" fill="none" stroke="#B69FDB" stroke-width="5"/>
-      <path d="M347 388 C321 418 313 419 296 410 C284 403 278 386 266 380" fill="none" stroke="#F0E8F6" stroke-width="6" stroke-linecap="round"/>
-    </g>
+  <g class="paw-left">
+    <ellipse cx="195" cy="275" rx="22" ry="19" fill="#ffffff" transform="rotate(-15 195 275)" />
+    <path d="M185 272 Q192 265 198 268 M195 285 Q202 278 208 281" fill="none" stroke="#9376bc" stroke-width="2.5" stroke-linecap="round" />
+  </g>
+  <g class="paw-right">
+    <ellipse cx="275" cy="270" rx="22" ry="19" fill="#ffffff" transform="rotate(15 275 270)" />
+    <path d="M282 265 Q275 260 268 263 M275 280 Q268 275 261 278" fill="none" stroke="#9376bc" stroke-width="2.5" stroke-linecap="round" />
   </g>
 </svg>
