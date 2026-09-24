@@ -23,3 +23,22 @@ const CONTATO = {
   // Mensagem preenchida automaticamente no WhatsApp
   whatsappMensagem: "Olá! Vi sua loja e gostaria de saber mais sobre os amigurumis 🧶",
 };
+
+// Substitui o desenho estático da capa pelo gatinho SVG animado.
+document.addEventListener('DOMContentLoaded', () => {
+  const heroArt = document.querySelector('.hero-art');
+  if (!heroArt) return;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    .hero-art > svg { display: none; }
+    .hero-art::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('hero-cat.svg') center / contain no-repeat;
+      z-index: 1;
+    }
+  `;
+  document.head.appendChild(style);
+});
