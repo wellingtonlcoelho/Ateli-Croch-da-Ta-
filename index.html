@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ponto de Lã — Amigurumi feito à mão</title>
+<meta name="description" content="Amigurumi artesanal feito à mão, um por um, com fio 100% algodão.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap header-row">
+    <div class="logo">Ponto <span>de Lã</span></div>
+    <button class="cart-btn" id="cartToggle" aria-label="Abrir carrinho">
+      Carrinho
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<section class="wrap hero">
+  <div>
+    <h1>Cada bichinho leva horas de carinho pra nascer.</h1>
+    <p>Amigurumi artesanal, feito ponto a ponto com fio 100% algodão. Peças únicas para presentear ou guardar pra você.</p>
+    <a href="#catalogo" class="hero-cta">Ver o catálogo</a>
+  </div>
+  <div class="hero-art">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="58" r="26" fill="#FAF7F3"/>
+      <circle cx="36" cy="34" r="12" fill="#FAF7F3"/>
+      <circle cx="64" cy="34" r="12" fill="#FAF7F3"/>
+      <circle cx="42" cy="55" r="3" fill="#332741"/>
+      <circle cx="58" cy="55" r="3" fill="#332741"/>
+      <path d="M44 65c2 3 10 3 12 0" stroke="#332741" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+</section>
+
+<main class="wrap" id="catalogo">
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer class="wrap">
+  <div class="footer-row">
+    <span>Ponto de Lã — feito à mão, um de cada vez.</span>
+    <span>Pagamento seguro via Mercado Pago · Pix e cartão</span>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>Seu carrinho</h3>
+    <button class="drawer-close" id="drawerClose" aria-label="Fechar carrinho">×</button>
+  </div>
+  <div class="drawer-items" id="drawerItems"></div>
+  <div class="drawer-foot">
+    <div class="total-row">
+      <span>Total</span>
+      <span id="drawerTotal">R$ 0,00</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" disabled>Finalizar compra</button>
+    <p class="checkout-note">Você será levada(o) ao ambiente seguro do Mercado Pago.</p>
+  </div>
+</aside>
+
+<script src="products.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
