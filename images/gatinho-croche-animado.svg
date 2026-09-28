@@ -50,30 +50,32 @@
   
   <path d="M145 170c5 8 25 8 30 0" fill="none" stroke="#332741" stroke-width="3.5" stroke-linecap="round"/>
   
-  <path class="fio-conector" d="M190 255 Q 215 285 240 260" fill="none" stroke="#BBA4DB" stroke-width="3" stroke-linecap="round"/>
+  <path class="fio-conector" d="M190 255 Q 215 285 240 260" fill="none" stroke="#CEB7E6" stroke-width="3" stroke-linecap="round"/>
   
   <g class="bola-de-la">
-    <circle fill="#BBA4DB" cx="245" cy="245" r="22"/>
-    <path d="M228 238c8-6 20-6 28 3 M225 247c9-4 22-2 30 5 M230 255c8-2 18 0 24 5" fill="none" stroke="#D8C6F1" stroke-width="2" stroke-linecap="round"/>
-  </g>
-  
-  <g class="trico">
-    <rect fill="#BBA4DB" x="120" y="215" width="80" height="50" rx="6"/>
-    <g fill="none" stroke="#8D72BB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M128 225l2.5 3 2.5-3 M138 225l2.5 3 2.5-3 M148 225l2.5 3 2.5-3 M158 225l2.5 3 2.5-3 M168 225l2.5 3 2.5-3 M178 225l2.5 3 2.5-3 M188 225l2.5 3 2.5-3"/>
-      <path d="M133 235l2.5 3 2.5-3 M143 235l2.5 3 2.5-3 M153 235l2.5 3 2.5-3 M163 235l2.5 3 2.5-3 M173 235l2.5 3 2.5-3 M183 235l2.5 3 2.5-3"/>
-      <path d="M128 245l2.5 3 2.5-3 M138 245l2.5 3 2.5-3 M148 245l2.5 3 2.5-3 M158 245l2.5 3 2.5-3 M168 245l2.5 3 2.5-3 M178 245l2.5 3 2.5-3 M188 245l2.5 3 2.5-3"/>
-      <path d="M133 255l2.5 3 2.5-3 M143 255l2.5 3 2.5-3 M153 255l2.5 3 2.5-3 M163 255l2.5 3 2.5-3 M173 255l2.5 3 2.5-3 M183 255l2.5 3 2.5-3"/>
+    <circle fill="#CEB7E6" cx="245" cy="245" r="22"/>
+    <g fill="none" stroke="#D8C6F1" stroke-width="2" stroke-linecap="round">
+      <path d="M 226 238 Q 228 235, 230 238 T 234 238 T 238 238 T 242 238 T 246 238 T 250 238 T 254 238 T 258 238"/>
+      <path d="M 224 246 Q 226 243, 228 246 T 232 246 T 236 246 T 240 246 T 244 246 T 248 246 T 252 246 T 256 246 T 260 246 T 264 246"/>
+      <path d="M 229 254 Q 231 251, 233 254 T 237 254 T 241 254 T 245 254 T 249 254 T 253 254 T 257 254"/>
     </g>
   </g>
   
-  <g class="agulha-esq">
-    <path d="M90 250 L152 205" stroke="#332741" stroke-width="5" stroke-linecap="round"/>
-    <path d="M147 202 L152 205" stroke="#FAF7F3" stroke-width="2.5" stroke-linecap="round"/>
+  <g class="trico">
+    <rect fill="#CEB7E6" x="120" y="215" width="80" height="50" rx="16"/>
+    <g fill="none" stroke="#9A7EC8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M130 225 Q 132.5 221, 135 225 T 140 225 T 145 225 T 150 225 T 155 225 T 160 225 T 165 225 T 170 225 T 175 225 T 180 225 T 185 225 T 190 225"/>
+      <path d="M130 235 Q 132.5 231, 135 235 T 140 235 T 145 235 T 150 235 T 155 235 T 160 235 T 165 235 T 170 235 T 175 235 T 180 235 T 185 235 T 190 235"/>
+      <path d="M130 245 Q 132.5 241, 135 245 T 140 245 T 145 245 T 150 245 T 155 245 T 160 245 T 165 245 T 170 245 T 175 245 T 180 245 T 185 245 T 190 245"/>
+    </g>
   </g>
   
   <g class="agulha-dir">
-    <line x1="230" y1="250" x2="168" y2="205" stroke="#C9A227" stroke-width="5" stroke-linecap="round"/>
+    <line x1="230" y1="250" x2="150" y2="202" stroke="#AE8547" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <g class="agulha-esq">
+    <line x1="90" y1="250" x2="170" y2="202" stroke="#3D314D" stroke-width="5" stroke-linecap="round"/>
   </g>
   
   <g>
