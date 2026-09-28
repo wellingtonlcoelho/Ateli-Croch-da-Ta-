@@ -4,10 +4,10 @@
 
 const CONTATO = {
   bio: "Oi, eu sou a Thalita! Crio cada amigurumi à mão, ponto a ponto, com fio 100% algodão. Cada peça é única e feita com bastante carinho — que tal fazer parte dessa história com um bichinho feito especialmente para você?",
-  instagramUrl: "https://instagram.com/seu.perfil.aqui",
-  instagramTexto: "@seu.perfil.aqui",
+  instagramUrl: "https://www.instagram.com/thalita.ateliecroche?stkn=MTdnaHh6bWltdzZiNw==",
+  instagramTexto: "@thalita.ateliecroche",
   email: "seuemail@exemplo.com",
-  whatsapp: "5500000000000",
+  whatsapp: "554199877276",
   whatsappMensagem: "Olá! Vi sua loja e gostaria de saber mais sobre os amigurumis 🧶",
 };
 

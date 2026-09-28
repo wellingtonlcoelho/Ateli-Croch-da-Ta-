@@ -99,6 +99,7 @@ let categoriaAtiva = 'Todos';
 
 function renderizarFiltros() {
   const el = document.getElementById('filters');
+  if (!el) return;
   el.innerHTML = categorias().map(cat => `
     <button class="filter-chip ${cat === categoriaAtiva ? 'active' : ''}" data-cat="${cat}">
       ${cat}
@@ -116,6 +117,7 @@ function renderizarFiltros() {
 
 function renderizarGrid() {
   const el = document.getElementById('grid');
+  if (!el) return;
   const lista = categoriaAtiva === 'Todos'
     ? PRODUTOS
     : PRODUTOS.filter(p => p.categoria === categoriaAtiva);
@@ -126,7 +128,7 @@ function renderizarGrid() {
     return `
     <div class="card">
       <div class="card-media">
-        ${p.imagem ? `<img src="${p.imagem}" alt="${p.nome}">` : ICONE_PADRAO}
+        ${p.imagem ? `<img src="${p.imagem}" alt="${p.nome}" loading="lazy">` : ICONE_PADRAO}
         ${esgotado
           ? `<span class="sold-out-tag">Esgotado</span>`
           : `<span class="price-tag">${money(p.preco)}</span>`}
