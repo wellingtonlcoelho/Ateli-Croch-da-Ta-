@@ -1,26 +1,88 @@
 <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gatinho fazendo crochê">
   <style>
-    .olhos{transform-box:fill-box;transform-origin:center;animation:piscar 4.6s ease-in-out infinite}@keyframes piscar{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY:.15}}
-    .bigode-esq{transform-box:fill-box;transform-origin:100% 50%;animation:bigode 3.2s ease-in-out infinite}.bigode-dir{transform-box:fill-box;transform-origin:0 50%;animation:bigode 3.2s ease-in-out infinite;animation-delay:.15s}@keyframes bigode{0%,80%,100%{transform:rotate(0)}90%{transform:rotate(-4deg)}}
-    .agulha-esq{transform-origin:144px 216px;animation:tricotar-esq 1.5s ease-in-out infinite}@keyframes tricotar-esq{0%,100%{transform:rotate(0)}50%{transform:rotate(-10deg)}}
-    .agulha-dir{transform-origin:190px 216px;animation:tricotar-dir 1.5s ease-in-out infinite}@keyframes tricotar-dir{0%,100%{transform:rotate(0)}50%{transform:rotate(10deg)}}
-    .fio-conector{transform-box:fill-box;transform-origin:0 0;animation:balancar 2.6s ease-in-out infinite}@keyframes balancar{0%,100%{transform:rotate(0)}50%{transform:rotate(3deg)}}
-    .bola-de-la{transform-box:fill-box;transform-origin:center;animation:girar 7s linear infinite}@keyframes girar{to{transform:rotate(360deg)}}
-    .trico{transform-box:fill-box;transform-origin:50% 100%;animation:crescer 1.5s ease-in-out infinite}@keyframes crescer{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.035)}}
+    .olhos{transform-box:fill-box;transform-origin:center;animation:piscar 4.6s ease-in-out infinite}
+    @keyframes piscar{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY:.15}}
+    
+    .bigode-esq{transform-box:fill-box;transform-origin:100% 50%;animation:bigode 3.2s ease-in-out infinite}
+    .bigode-dir{transform-box:fill-box;transform-origin:0 50%;animation:bigode 3.2s ease-in-out infinite;animation-delay:.15s}
+    @keyframes bigode{0%,80%,100%{transform:rotate(0)}90%{transform:rotate(-4deg)}}
+    
+    .agulha-esq{transform-origin:115px 225px;animation:tricotar-esq 1.2s ease-in-out infinite}
+    @keyframes tricotar-esq{0%,100%{transform:rotate(0)}50%{transform:rotate(-15deg)}}
+    
+    .agulha-dir{transform-origin:205px 225px;animation:tricotar-dir 1.2s ease-in-out infinite;animation-delay:0.3s}
+    @keyframes tricotar-dir{0%,100%{transform:rotate(0)}50%{transform:rotate(15deg)}}
+    
+    .fio-conector{transform-box:fill-box;transform-origin:0 0;animation:balancar 2.4s ease-in-out infinite}
+    @keyframes balancar{0%,100%{transform:rotate(0)}50%{transform:rotate(4deg)}}
+    
+    .bola-de-la{transform-box:fill-box;transform-origin:center;animation:girar 8s linear infinite}
+    @keyframes girar{to{transform:rotate(360deg)}}
+    
+    .trico{transform-box:fill-box;transform-origin:50% 100%;animation:crescer 1.2s ease-in-out infinite}
+    @keyframes crescer{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+    
     @media(prefers-reduced-motion:reduce){.olhos,.bigode-esq,.bigode-dir,.agulha-esq,.agulha-dir,.fio-conector,.bola-de-la,.trico{animation:none}}
   </style>
-  <circle fill="#9B7FBF" cx="160" cy="170" r="140"/>
-  <circle fill="#D9CBEC" cx="247" cy="88" r="60"/>
-  <polygon fill="#FAF7F3" points="112,128 138,60 158,118"/><polygon fill="#FAF7F3" points="208,128 182,60 162,118"/>
-  <ellipse fill="#FAF7F3" cx="160" cy="148" rx="72" ry="58"/>
-  <g class="bigode-esq" fill="none" stroke="#55396F" stroke-width="2.4" stroke-linecap="round"><path d="M98 148L58 138"/><path d="M96 158L56 158"/><path d="M98 168L58 176"/></g>
-  <g class="bigode-dir" fill="none" stroke="#55396F" stroke-width="2.4" stroke-linecap="round"><path d="M222 148L262 138"/><path d="M224 158L264 158"/><path d="M222 168L262 176"/></g>
-  <g class="olhos" fill="#332741"><circle cx="134" cy="148" r="7.5"/><circle cx="186" cy="148" r="7.5"/></g>
-  <path d="M144 174c6 9 26 9 32 0" fill="none" stroke="#55396F" stroke-width="3.2" stroke-linecap="round"/>
-  <g class="bola-de-la"><circle fill="#B394D6" cx="236" cy="238" r="21"/><path d="M217 232c8-6 20-6 28 3M216 240c9-4 22-2 30 5M219 247c8-2 18 0 24 5" fill="none" stroke="#8A66B8" stroke-width="1.6" stroke-linecap="round"/></g>
-  <path class="fio-conector" d="M198 224c14 3 24 7 33 12" fill="none" stroke="#55396F" stroke-width="2"/>
-  <g class="trico"><rect fill="#C9AEE0" x="133" y="220" width="68" height="46" rx="10"/><path d="M141 230l9 10 9-10 9 10 9-10 9 10 9-10M141 245l9 10 9-10 9 10 9-10 9 10 9-10M141 260l9 5 9-5 9 5 9-5 9 5 9-5" fill="none" stroke="#7C5AA6" stroke-width="1.8" stroke-linecap="round"/></g>
-  <ellipse fill="#FAF7F3" cx="144" cy="216" rx="16" ry="14"/><ellipse fill="#FAF7F3" cx="190" cy="216" rx="16" ry="14"/>
-  <g class="agulha-esq"><line x1="144" y1="216" x2="176" y2="188" stroke="#C9A227" stroke-width="6" stroke-linecap="round"/></g>
-  <g class="agulha-dir"><line x1="190" y1="216" x2="158" y2="188" stroke="#C9A227" stroke-width="6" stroke-linecap="round"/></g>
+  
+  <circle fill="#8D72BB" cx="160" cy="170" r="140"/>
+  <circle fill="#D8C6F1" cx="247" cy="88" r="60"/>
+  
+  <polygon fill="#FAF7F3" points="112,128 122,55 160,110"/>
+  <polygon fill="#FAF7F3" points="208,128 198,55 160,110"/>
+  <ellipse fill="#FAF7F3" cx="160" cy="148" rx="76" ry="62"/>
+  
+  <g class="bigode-esq" fill="none" stroke="#D8C6F1" stroke-width="3" stroke-linecap="round">
+    <path d="M100 145 L55 135"/>
+    <path d="M98 155 L53 155"/>
+    <path d="M100 165 L55 175"/>
+  </g>
+  <g class="bigode-dir" fill="none" stroke="#D8C6F1" stroke-width="3" stroke-linecap="round">
+    <path d="M220 145 L265 135"/>
+    <path d="M222 155 L267 155"/>
+    <path d="M220 165 L265 175"/>
+  </g>
+  
+  <g class="olhos" fill="#332741">
+    <circle cx="132" cy="148" r="7.5"/>
+    <circle cx="188" cy="148" r="7.5"/>
+  </g>
+  
+  <path d="M145 170c5 8 25 8 30 0" fill="none" stroke="#332741" stroke-width="3.5" stroke-linecap="round"/>
+  
+  <path class="fio-conector" d="M190 255 Q 215 285 240 260" fill="none" stroke="#BBA4DB" stroke-width="3" stroke-linecap="round"/>
+  
+  <g class="bola-de-la">
+    <circle fill="#BBA4DB" cx="245" cy="245" r="22"/>
+    <path d="M228 238c8-6 20-6 28 3 M225 247c9-4 22-2 30 5 M230 255c8-2 18 0 24 5" fill="none" stroke="#D8C6F1" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  
+  <g class="trico">
+    <rect fill="#BBA4DB" x="120" y="215" width="80" height="50" rx="6"/>
+    <g fill="none" stroke="#8D72BB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M128 225l2.5 3 2.5-3 M138 225l2.5 3 2.5-3 M148 225l2.5 3 2.5-3 M158 225l2.5 3 2.5-3 M168 225l2.5 3 2.5-3 M178 225l2.5 3 2.5-3 M188 225l2.5 3 2.5-3"/>
+      <path d="M133 235l2.5 3 2.5-3 M143 235l2.5 3 2.5-3 M153 235l2.5 3 2.5-3 M163 235l2.5 3 2.5-3 M173 235l2.5 3 2.5-3 M183 235l2.5 3 2.5-3"/>
+      <path d="M128 245l2.5 3 2.5-3 M138 245l2.5 3 2.5-3 M148 245l2.5 3 2.5-3 M158 245l2.5 3 2.5-3 M168 245l2.5 3 2.5-3 M178 245l2.5 3 2.5-3 M188 245l2.5 3 2.5-3"/>
+      <path d="M133 255l2.5 3 2.5-3 M143 255l2.5 3 2.5-3 M153 255l2.5 3 2.5-3 M163 255l2.5 3 2.5-3 M173 255l2.5 3 2.5-3 M183 255l2.5 3 2.5-3"/>
+    </g>
+  </g>
+  
+  <g class="agulha-esq">
+    <path d="M90 250 L152 205" stroke="#332741" stroke-width="5" stroke-linecap="round"/>
+    <path d="M147 202 L152 205" stroke="#FAF7F3" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  
+  <g class="agulha-dir">
+    <line x1="230" y1="250" x2="168" y2="205" stroke="#C9A227" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  
+  <g>
+    <ellipse fill="#FAF7F3" cx="115" cy="225" rx="18" ry="16"/>
+    <path d="M108 215 C 112 220, 112 225, 110 232" fill="none" stroke="#8D72BB" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M122 213 C 120 218, 120 223, 120 231" fill="none" stroke="#8D72BB" stroke-width="2.5" stroke-linecap="round"/>
+    
+    <ellipse fill="#FAF7F3" cx="205" cy="225" rx="18" ry="16"/>
+    <path d="M212 215 C 208 220, 208 225, 210 232" fill="none" stroke="#8D72BB" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M198 213 C 200 218, 200 223, 200 231" fill="none" stroke="#8D72BB" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
 </svg>
