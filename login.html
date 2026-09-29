@@ -4,30 +4,86 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Ateliê da Tá</title>
-  <link rel="stylesheet" href="index.css">
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="auth-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header>
-    <a href="index.html" class="logo">Ateliê da Tá</a>
+    <a href="index.html" class="logo">🧶 Ateliê da Tá</a>
   </header>
 
-  <main style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
-    <div style="background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 400px; margin: 2rem;">
-      <h2 style="text-align: center; color: var(--text-dark); margin-bottom: 1.5rem;">Entrar</h2>
-      
-      <form id="login-form" style="display: flex; flex-direction: column; gap: 1rem;">
-        <div id="error-msg" style="color: #d9534f; text-align: center; display: none; background: #fdf2f2; padding: 0.5rem; border-radius: 8px;"></div>
-        
-        <input type="email" id="email" placeholder="Seu E-mail" required style="padding: 1rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 1rem;">
-        <input type="password" id="senha" placeholder="Sua Senha" required style="padding: 1rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 1rem;">
-        
-        <button type="submit" class="btn" style="width: 100%; margin-top: 1rem; padding: 1rem; font-size: 1.1rem;">Entrar</button>
-      </form>
-      
-      <p style="text-align: center; margin-top: 1.5rem; font-size: 0.95rem; color: #666;">
-        Não tem conta? <a href="cadastro.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">Crie agora</a>
-      </p>
+  <main>
+    <div class="auth-wrapper">
+      <!-- PAINEL ESQUERDO - VISUAL/INSPIRAÇÃO -->
+      <div class="auth-left">
+        <div class="auth-left-content">
+          <div class="brand">🧶</div>
+          <h1>Bem-vinda ao Ateliê!</h1>
+          <p>Acesse sua conta para acompanhar seus pedidos, designs favoritos e muito mais.</p>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-text">
+                <strong>Faça Login</strong>
+                <span>Acesse sua conta com segurança</span>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-text">
+                <strong>Explore Designs</strong>
+                <span>Escolha entre diversos modelos únicos</span>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-text">
+                <strong>Acompanhe Pedidos</strong>
+                <span>Veja em tempo real o status da confecção</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAINEL DIREITO - FORMULÁRIO -->
+      <div class="auth-right">
+        <h2>Entrar</h2>
+        <p class="subtitle">Digite seus dados para continuar</p>
+
+        <form id="login-form" class="auth-form">
+          <div id="error-msg"></div>
+
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input 
+              type="email" 
+              id="email" 
+              placeholder="seu@email.com" 
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="senha">Senha</label>
+            <input 
+              type="password" 
+              id="senha" 
+              placeholder="••••••••" 
+              required
+            >
+          </div>
+
+          <button type="submit" class="auth-btn">Entrar na Conta</button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Não tem conta? 
+            <a href="cadastro.html">Crie uma agora</a>
+          </p>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -68,7 +124,7 @@
         errorMsg.innerText = 'Erro de conexão. Tente novamente.';
         errorMsg.style.display = 'block';
       } finally {
-        btn.innerText = 'Entrar';
+        btn.innerText = 'Entrar na Conta';
         btn.disabled = false;
       }
     });
