@@ -22,7 +22,13 @@ CREATE TABLE IF NOT EXISTS produtos_estoque (
 -- o pagamento (status "approved", "rejected" etc.)
 CREATE TABLE IF NOT EXISTS pedidos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  usuario_id INTEGER REFERENCES usuarios(id),
   status TEXT NOT NULL DEFAULT 'pendente',
+  status_confeccao TEXT DEFAULT 'na_fila',
+  prazo_confeccao_dias INTEGER,
+  prazo_entrega_dias INTEGER,
+  cep_destino TEXT,
+  codigo_rastreio TEXT,
   total REAL NOT NULL,
   mp_preference_id TEXT,
   mp_payment_id TEXT,
@@ -50,3 +56,39 @@ INSERT INTO produtos_estoque (produto_id, estoque) VALUES
   ('p06', 5), ('p07', 8), ('p08', 6), ('p09', 4), ('p10', 5),
   ('p11', 4), ('p12', 4), ('p13', 5), ('p14', 4), ('p15', 5)
 ON CONFLICT(produto_id) DO NOTHING;
+
+-- ─────────────────────────────────────────────────────────
+-- NOVAS TABELAS: SISTEMA DE USUÁRIOS E SUPORTE
+-- ─────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS usuarios (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  senha_hash TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'cliente',
+  criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS sessoes (
+  token TEXT PRIMARY KEY,
+  usuario_id INTEGER NOT NULL REFERENCES usuarios(id),
+  criado_em TEXT NOT NULL DEFAULT (datetime('now')),
+  expira_em TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS suporte_tickets (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  usuario_id INTEGER NOT NULL REFERENCES usuarios(id),
+  assunto TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'aberto',
+  criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS mensagens_suporte (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ticket_id INTEGER NOT NULL REFERENCES suporte_tickets(id),
+  remetente_id INTEGER NOT NULL REFERENCES usuarios(id),
+  mensagem TEXT NOT NULL,
+  criado_em TEXT NOT NULL DEFAULT (datetime('now'))
+);

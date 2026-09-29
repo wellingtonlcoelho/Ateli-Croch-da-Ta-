@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus Pedidos - Ateliê da Tá</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .pedidos-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .page-header h1 { color: var(--text-dark); font-size: 1.8rem; }
+    .user-bar { display: flex; align-items: center; gap: 1rem; }
+    .user-bar span { color: #666; font-size: 0.95rem; }
+    .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; font-weight: 500; text-decoration: none; }
+    .btn-logout { background: #f0f0f0; color: #666; }
+    .btn-logout:hover { background: #e0e0e0; }
+    .btn-suporte { background: var(--primary); color: white; }
+
+    .pedido-card { background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .pedido-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    .pedido-id { font-weight: 600; color: var(--text-dark); font-size: 1.1rem; }
+    .pedido-data { color: #999; font-size: 0.85rem; }
+
+    .badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+    .badge-pendente { background: #fff3cd; color: #856404; }
+    .badge-approved { background: #d4edda; color: #155724; }
+    .badge-rejected { background: #f8d7da; color: #721c24; }
+    .badge-na_fila { background: #e2e3e5; color: #383d41; }
+    .badge-em_producao { background: #cce5ff; color: #004085; }
+    .badge-finalizado { background: #d4edda; color: #155724; }
+    .badge-enviado { background: #d1ecf1; color: #0c5460; }
+
+    .progress-track { display: flex; align-items: center; margin: 1.2rem 0; gap: 0; }
+    .progress-step { flex: 1; text-align: center; position: relative; }
+    .progress-step .dot { width: 28px; height: 28px; border-radius: 50%; background: #e0e0e0; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: white; font-weight: 600; transition: all 0.3s; }
+    .progress-step.active .dot { background: var(--primary); box-shadow: 0 0 0 4px rgba(155,127,191,0.25); }
+    .progress-step.done .dot { background: #28a745; }
+    .progress-step .label { font-size: 0.7rem; margin-top: 0.4rem; color: #999; }
+    .progress-step.active .label, .progress-step.done .label { color: var(--text-dark); font-weight: 500; }
+    .progress-line { flex: 0.5; height: 3px; background: #e0e0e0; }
+    .progress-line.done { background: #28a745; }
+
+    .pedido-itens { margin: 1rem 0; }
+    .pedido-item { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid #f5f5f5; font-size: 0.9rem; }
+    .pedido-total { text-align: right; font-weight: 600; font-size: 1.1rem; color: var(--primary); margin-top: 0.5rem; }
+
+    .info-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0; }
+    .info-item { font-size: 0.85rem; color: #666; }
+    .info-item strong { color: var(--text-dark); }
+
+    .empty-state { text-align: center; padding: 4rem 2rem; color: #999; }
+    .empty-state h2 { font-size: 1.4rem; margin-bottom: 0.5rem; color: #bbb; }
+
+    .nav-links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">Ateliê da Tá</a>
+    <nav>
+      <a href="index.html">Loja</a>
+      <a href="suporte.html">Suporte</a>
+    </nav>
+  </header>
+
+  <main class="pedidos-container">
+    <div class="page-header">
+      <h1>🧶 Meus Pedidos</h1>
+      <div class="user-bar">
+        <span id="user-name"></span>
+        <a href="suporte.html" class="btn-sm btn-suporte">💬 Suporte</a>
+        <button class="btn-sm btn-logout" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div id="pedidos-list">
+      <div class="empty-state" id="loading">
+        <p>Carregando seus pedidos...</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const token = localStorage.getItem('auth_token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token) { window.location.href = 'login.html'; }
+    document.getElementById('user-name').textContent = `Olá, ${user.nome || 'Cliente'}!`;
+
+    function logout() {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+
+    const statusLabels = {
+      'pendente': 'Aguardando Pagamento',
+      'approved': 'Pago ✅',
+      'rejected': 'Rejeitado',
+      'na_fila': 'Na Fila',
+      'em_producao': 'Em Produção',
+      'finalizado': 'Pronto',
+      'enviado': 'Enviado'
+    };
+
+    function getProgressSteps(pedido) {
+      const steps = ['Na Fila', 'Produzindo', 'Pronto', 'Enviado'];
+      const statusMap = { 'na_fila': 0, 'em_producao': 1, 'finalizado': 2, 'enviado': 3 };
+      const current = statusMap[pedido.status_confeccao] ?? -1;
+      return steps.map((label, i) => ({
+        label,
+        done: i < current,
+        active: i === current
+      }));
+    }
+
+    function renderPedido(p) {
+      const date = new Date(p.criado_em).toLocaleDateString('pt-BR');
+      const statusClass = p.status === 'approved' ? 'approved' : (p.status === 'rejected' ? 'rejected' : 'pendente');
+      const confClass = p.status_confeccao || 'na_fila';
+      const steps = getProgressSteps(p);
+
+      let itensHtml = '';
+      if (p.itens && p.itens.length) {
+        itensHtml = p.itens.map(i => `
+          <div class="pedido-item">
+            <span>${i.produto_nome} × ${i.quantidade}</span>
+            <span>R$ ${(i.preco * i.quantidade).toFixed(2)}</span>
+          </div>
+        `).join('');
+      }
+
+      let progressHtml = '';
+      if (p.status === 'approved') {
+        progressHtml = '<div class="progress-track">';
+        steps.forEach((s, i) => {
+          if (i > 0) progressHtml += `<div class="progress-line ${s.done ? 'done' : ''}"></div>`;
+          progressHtml += `
+            <div class="progress-step ${s.done ? 'done' : ''} ${s.active ? 'active' : ''}">
+              <div class="dot">${s.done ? '✓' : (i + 1)}</div>
+              <div class="label">${s.label}</div>
+            </div>`;
+        });
+        progressHtml += '</div>';
+      }
+
+      let infoHtml = '';
+      if (p.prazo_confeccao_dias) {
+        infoHtml += `<div class="info-item">🧵 Prazo de confecção: <strong>${p.prazo_confeccao_dias} dias</strong></div>`;
+      }
+      if (p.prazo_entrega_dias) {
+        infoHtml += `<div class="info-item">🚚 Prazo de entrega: <strong>${p.prazo_entrega_dias} dias úteis</strong></div>`;
+      }
+      if (p.codigo_rastreio) {
+        infoHtml += `<div class="info-item">📦 Rastreio: <strong>${p.codigo_rastreio}</strong></div>`;
+      }
+
+      return `
+        <div class="pedido-card">
+          <div class="pedido-header">
+            <span class="pedido-id">Pedido #${p.id}</span>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+              <span class="badge badge-${statusClass}">${statusLabels[p.status] || p.status}</span>
+              <span class="badge badge-${confClass}">${statusLabels[p.status_confeccao] || 'Na Fila'}</span>
+            </div>
+            <span class="pedido-data">${date}</span>
+          </div>
+          ${progressHtml}
+          <div class="pedido-itens">${itensHtml}</div>
+          <div class="pedido-total">Total: R$ ${p.total.toFixed(2)}</div>
+          ${infoHtml ? `<div class="info-row">${infoHtml}</div>` : ''}
+        </div>
+      `;
+    }
+
+    async function loadPedidos() {
+      try {
+        const res = await fetch('/api/pedidos/cliente', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.status === 401) { window.location.href = 'login.html'; return; }
+        const pedidos = await res.json();
+        const container = document.getElementById('pedidos-list');
+
+        if (!pedidos.length) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <h2>Nenhum pedido ainda 🧶</h2>
+              <p>Explore nossa loja e faça seu primeiro pedido!</p>
+              <a href="index.html" class="btn" style="margin-top:1rem;display:inline-block;">Ver Produtos</a>
+            </div>`;
+          return;
+        }
+        container.innerHTML = pedidos.map(renderPedido).join('');
+      } catch (err) {
+        document.getElementById('pedidos-list').innerHTML = `
+          <div class="empty-state"><p>Erro ao carregar pedidos. Tente novamente.</p></div>`;
+      }
+    }
+
+    loadPedidos();
+  </script>
+</body>
+</html>

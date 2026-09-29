@@ -17,6 +17,7 @@
     <div class="logo"><span>Thalita Ateliê</span> Crochê</div>
     <div class="header-actions">
       <a href="sobre.html" class="nav-link">Sobre mim</a>
+      <a href="#" id="auth-link" class="nav-link" onclick="goToAuth()">Entrar</a>
       <button class="cart-btn" id="cartToggle" aria-label="Abrir carrinho">
         Carrinho
         <span class="cart-count" id="cartCount">0</span>
@@ -81,5 +82,24 @@
 <script src="contato.js"></script>
 <script src="products.js"></script>
 <script src="script.js"></script>
+<script>
+  function goToAuth() {
+    const token = localStorage.getItem('auth_token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (token) {
+      window.location.href = user.role === 'admin' ? 'admin.html' : 'meus-pedidos.html';
+    } else {
+      window.location.href = 'login.html';
+    }
+  }
+  (function() {
+    const token = localStorage.getItem('auth_token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const link = document.getElementById('auth-link');
+    if (token && link) {
+      link.textContent = user.role === 'admin' ? '📊 Admin' : '📦 Meus Pedidos';
+    }
+  })();
+</script>
 </body>
 </html>

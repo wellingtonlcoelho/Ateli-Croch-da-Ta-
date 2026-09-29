@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Ateliê da Tá</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --admin-bg: #f7f4fb; }
+    body { background: var(--admin-bg); }
+    .admin-container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .admin-header h1 { color: var(--text-dark); font-size: 1.8rem; }
+    .admin-nav { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .admin-nav button { padding: 0.6rem 1.2rem; border: none; border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 500; font-size: 0.9rem; background: white; color: #666; transition: all 0.2s; }
+    .admin-nav button.active { background: var(--primary); color: white; }
+    .admin-nav button:hover:not(.active) { background: #ece4f4; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border-radius: 14px; padding: 1.2rem; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    .stat-card .icon { font-size: 1.6rem; margin-bottom: 0.3rem; }
+    .stat-card .value { font-size: 1.8rem; font-weight: 600; color: var(--text-dark); }
+    .stat-card .label { font-size: 0.8rem; color: #999; margin-top: 0.2rem; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    th { background: #f3eef8; color: var(--text-dark); font-weight: 500; font-size: 0.85rem; text-align: left; padding: 0.8rem 1rem; }
+    td { padding: 0.7rem 1rem; border-top: 1px solid #f5f5f5; font-size: 0.85rem; color: #555; }
+    tr:hover td { background: #faf7fd; }
+
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; }
+    .badge-pendente { background: #fff3cd; color: #856404; }
+    .badge-approved { background: #d4edda; color: #155724; }
+    .badge-rejected { background: #f8d7da; color: #721c24; }
+    .badge-na_fila { background: #e2e3e5; color: #383d41; }
+    .badge-em_producao { background: #cce5ff; color: #004085; }
+    .badge-finalizado { background: #d4edda; color: #155724; }
+    .badge-enviado { background: #d1ecf1; color: #0c5460; }
+    .badge-aberto { background: #cce5ff; color: #004085; }
+    .badge-fechado { background: #e2e3e5; color: #383d41; }
+
+    select, input[type="number"], input[type="text"] {
+      padding: 0.4rem 0.6rem; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 0.85rem;
+    }
+    .btn-save { padding: 0.4rem 0.8rem; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 0.8rem; font-weight: 500; }
+    .btn-save:hover { opacity: 0.9; }
+    .btn-danger { background: #dc3545; }
+    .btn-sm-admin { padding: 0.3rem 0.6rem; font-size: 0.78rem; border: none; border-radius: 6px; cursor: pointer; font-family: inherit; }
+
+    .ticket-card { background: white; border-radius: 14px; padding: 1.2rem; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+    .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+    .mensagens { max-height: 200px; overflow-y: auto; margin: 0.5rem 0; }
+    .msg { padding: 0.5rem 0.8rem; margin: 0.3rem 0; border-radius: 10px; font-size: 0.85rem; max-width: 80%; }
+    .msg-cliente { background: #f0e6f6; margin-right: auto; }
+    .msg-admin { background: #e8f5e9; margin-left: auto; }
+    .msg-meta { font-size: 0.7rem; color: #999; }
+    .reply-form { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .reply-form input { flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
+
+    .btn-logout { padding: 0.5rem 1rem; background: #f0f0f0; color: #666; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">Ateliê da Tá</a>
+  </header>
+
+  <main class="admin-container">
+    <div class="admin-header">
+      <h1>📊 Painel Administrativo</h1>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span id="admin-name" style="color:#666;font-size:0.9rem;"></span>
+        <button class="btn-logout" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <div class="admin-nav">
+      <button class="active" onclick="showTab('dashboard', this)">📊 Dashboard</button>
+      <button onclick="showTab('pedidos', this)">📦 Pedidos</button>
+      <button onclick="showTab('confeccao', this)">🧵 Confecção</button>
+      <button onclick="showTab('logistica', this)">🚚 Logística</button>
+      <button onclick="showTab('suporte', this)">💬 Suporte</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="section active">
+      <div class="stats-grid" id="stats-grid"></div>
+      <h3 style="margin: 1.5rem 0 1rem; color: var(--text-dark);">Últimos Pedidos</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Cliente</th><th>Total</th><th>Pagamento</th><th>Confecção</th><th>Data</th></tr></thead>
+          <tbody id="ultimos-pedidos"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PEDIDOS -->
+    <div id="tab-pedidos" class="section">
+      <h3 style="margin: 1.5rem 0 1rem; color: var(--text-dark);">Todos os Pedidos</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Cliente</th><th>E-mail</th><th>Total</th><th>Pagamento</th><th>Itens</th><th>Data</th></tr></thead>
+          <tbody id="todos-pedidos"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CONFECÇÃO -->
+    <div id="tab-confeccao" class="section">
+      <h3 style="margin: 1.5rem 0 1rem; color: var(--text-dark);">🧵 Gerenciar Confecção</h3>
+      <p style="color:#999;font-size:0.9rem;margin-bottom:1rem;">Atualize o status e prazo de confecção de cada pedido. O cliente vê em tempo real.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Cliente</th><th>Itens</th><th>Status Confecção</th><th>Prazo (dias)</th><th>Ação</th></tr></thead>
+          <tbody id="confeccao-pedidos"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LOGÍSTICA -->
+    <div id="tab-logistica" class="section">
+      <h3 style="margin: 1.5rem 0 1rem; color: var(--text-dark);">🚚 Logística e Entregas</h3>
+      <p style="color:#999;font-size:0.9rem;margin-bottom:1rem;">Gerencie o código de rastreio e prazo de entrega dos pedidos finalizados.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Cliente</th><th>CEP</th><th>Prazo Entrega</th><th>Código Rastreio</th><th>Status</th><th>Ação</th></tr></thead>
+          <tbody id="logistica-pedidos"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SUPORTE -->
+    <div id="tab-suporte" class="section">
+      <h3 style="margin: 1.5rem 0 1rem; color: var(--text-dark);">💬 Tickets de Suporte</h3>
+      <div id="admin-tickets"></div>
+    </div>
+  </main>
+
+  <script>
+    const token = localStorage.getItem('auth_token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!token || user.role !== 'admin') { window.location.href = 'login.html'; }
+    document.getElementById('admin-name').textContent = user.nome || 'Admin';
+
+    function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+    function showTab(name, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-${name}`).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    const statusLabels = {
+      'pendente':'Pendente','approved':'Pago','rejected':'Rejeitado',
+      'na_fila':'Na Fila','em_producao':'Em Produção','finalizado':'Pronto','enviado':'Enviado'
+    };
+
+    function badge(status) {
+      return `<span class="badge badge-${status}">${statusLabels[status] || status}</span>`;
+    }
+
+    // ─── DASHBOARD ───
+    async function loadDashboard() {
+      const res = await fetch('/api/admin/dashboard', { headers: { 'Authorization': `Bearer ${token}` } });
+      if (res.status === 403) { alert('Sem permissão'); return; }
+      const d = await res.json();
+
+      document.getElementById('stats-grid').innerHTML = `
+        <div class="stat-card"><div class="icon">📦</div><div class="value">${d.total_pedidos}</div><div class="label">Pedidos Totais</div></div>
+        <div class="stat-card"><div class="icon">✅</div><div class="value">${d.pedidos_aprovados}</div><div class="label">Pedidos Pagos</div></div>
+        <div class="stat-card"><div class="icon">💰</div><div class="value">R$ ${d.receita_total.toFixed(2)}</div><div class="label">Receita Total</div></div>
+        <div class="stat-card"><div class="icon">👥</div><div class="value">${d.total_clientes}</div><div class="label">Clientes</div></div>
+        <div class="stat-card"><div class="icon">🧵</div><div class="value">${d.pedidos_em_confeccao}</div><div class="label">Em Confecção</div></div>
+        <div class="stat-card"><div class="icon">💬</div><div class="value">${d.tickets_abertos}</div><div class="label">Tickets Abertos</div></div>
+      `;
+
+      document.getElementById('ultimos-pedidos').innerHTML = (d.ultimos_pedidos || []).map(p => `
+        <tr>
+          <td>#${p.id}</td>
+          <td>${p.cliente_nome || '—'}</td>
+          <td>R$ ${p.total.toFixed(2)}</td>
+          <td>${badge(p.status)}</td>
+          <td>${badge(p.status_confeccao || 'na_fila')}</td>
+          <td>${new Date(p.criado_em).toLocaleDateString('pt-BR')}</td>
+        </tr>
+      `).join('');
+    }
+
+    // ─── PEDIDOS ───
+    let allPedidos = [];
+    async function loadPedidos() {
+      const res = await fetch('/api/pedidos/admin', { headers: { 'Authorization': `Bearer ${token}` } });
+      allPedidos = await res.json();
+
+      document.getElementById('todos-pedidos').innerHTML = allPedidos.map(p => `
+        <tr>
+          <td>#${p.id}</td>
+          <td>${p.cliente_nome || '—'}</td>
+          <td>${p.cliente_email || '—'}</td>
+          <td>R$ ${p.total.toFixed(2)}</td>
+          <td>${badge(p.status)}</td>
+          <td>${(p.itens||[]).map(i => `${i.produto_nome}×${i.quantidade}`).join(', ') || '—'}</td>
+          <td>${new Date(p.criado_em).toLocaleDateString('pt-BR')}</td>
+        </tr>
+      `).join('');
+
+      // Confecção
+      document.getElementById('confeccao-pedidos').innerHTML = allPedidos.filter(p => p.status === 'approved').map(p => `
+        <tr>
+          <td>#${p.id}</td>
+          <td>${p.cliente_nome || '—'}</td>
+          <td>${(p.itens||[]).map(i => i.produto_nome).join(', ') || '—'}</td>
+          <td>
+            <select id="conf-status-${p.id}">
+              <option value="na_fila" ${p.status_confeccao==='na_fila'?'selected':''}>Na Fila</option>
+              <option value="em_producao" ${p.status_confeccao==='em_producao'?'selected':''}>Em Produção</option>
+              <option value="finalizado" ${p.status_confeccao==='finalizado'?'selected':''}>Pronto</option>
+              <option value="enviado" ${p.status_confeccao==='enviado'?'selected':''}>Enviado</option>
+            </select>
+          </td>
+          <td><input type="number" id="conf-prazo-${p.id}" value="${p.prazo_confeccao_dias||''}" min="1" max="90" placeholder="dias" style="width:70px;"></td>
+          <td><button class="btn-save" onclick="salvarConfeccao(${p.id})">Salvar</button></td>
+        </tr>
+      `).join('');
+
+      // Logística
+      document.getElementById('logistica-pedidos').innerHTML = allPedidos.filter(p => p.status === 'approved').map(p => `
+        <tr>
+          <td>#${p.id}</td>
+          <td>${p.cliente_nome || '—'}</td>
+          <td>${p.cep_destino || '—'}</td>
+          <td>${p.prazo_entrega_dias ? p.prazo_entrega_dias + ' dias' : '—'}</td>
+          <td><input type="text" id="rastreio-${p.id}" value="${p.codigo_rastreio||''}" placeholder="Código" style="width:140px;"></td>
+          <td>${badge(p.status_confeccao || 'na_fila')}</td>
+          <td><button class="btn-save" onclick="salvarLogistica(${p.id})">Salvar</button></td>
+        </tr>
+      `).join('');
+    }
+
+    async function salvarConfeccao(id) {
+      const status_confeccao = document.getElementById(`conf-status-${id}`).value;
+      const prazo_confeccao_dias = parseInt(document.getElementById(`conf-prazo-${id}`).value) || null;
+      await fetch('/api/pedidos/atualizar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ id, status_confeccao, prazo_confeccao_dias })
+      });
+      alert('Confecção atualizada!');
+      loadPedidos();
+    }
+
+    async function salvarLogistica(id) {
+      const codigo_rastreio = document.getElementById(`rastreio-${id}`).value;
+      const pedido = allPedidos.find(p => p.id === id);
+      await fetch('/api/pedidos/atualizar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ id, status_confeccao: pedido.status_confeccao, codigo_rastreio })
+      });
+      alert('Logística atualizada!');
+      loadPedidos();
+    }
+
+    // ─── SUPORTE ADMIN ───
+    async function loadSuporte() {
+      const res = await fetch('/api/suporte', { headers: { 'Authorization': `Bearer ${token}` } });
+      const tickets = await res.json();
+      const container = document.getElementById('admin-tickets');
+
+      if (!tickets.length) { container.innerHTML = '<p style="color:#999;text-align:center;">Nenhum ticket.</p>'; return; }
+
+      container.innerHTML = tickets.map(t => {
+        const msgs = (t.mensagens || []).map(m => `
+          <div class="msg ${m.remetente_role === 'admin' ? 'msg-admin' : 'msg-cliente'}">
+            <div>${m.mensagem}</div>
+            <div class="msg-meta">${m.remetente_nome} · ${new Date(m.criado_em).toLocaleString('pt-BR')}</div>
+          </div>
+        `).join('');
+
+        return `
+          <div class="ticket-card">
+            <div class="ticket-header">
+              <div>
+                <strong>${t.assunto}</strong>
+                <span class="badge badge-${t.status}">${t.status === 'aberto' ? '🟢 Aberto' : '⚫ Fechado'}</span>
+                <span style="font-size:0.8rem;color:#999;margin-left:0.5rem;">por ${t.cliente_nome} (${t.cliente_email})</span>
+              </div>
+              <span style="font-size:0.8rem;color:#999;">${new Date(t.criado_em).toLocaleDateString('pt-BR')}</span>
+            </div>
+            <div class="mensagens">${msgs}</div>
+            ${t.status === 'aberto' ? `
+              <div class="reply-form">
+                <input type="text" id="admin-reply-${t.id}" placeholder="Responder ao cliente...">
+                <button class="btn-save" onclick="adminResponder(${t.id})">Enviar</button>
+                <button class="btn-save btn-danger" onclick="fecharTicket(${t.id})">Fechar</button>
+              </div>
+            ` : ''}
+          </div>`;
+      }).join('');
+    }
+
+    async function adminResponder(ticketId) {
+      const input = document.getElementById(`admin-reply-${ticketId}`);
+      if (!input.value.trim()) return;
+      await fetch('/api/suporte', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ acao: 'responder', ticket_id: ticketId, mensagem: input.value })
+      });
+      input.value = '';
+      loadSuporte();
+    }
+
+    async function fecharTicket(ticketId) {
+      if (!confirm('Fechar este ticket?')) return;
+      await fetch('/api/suporte', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ acao: 'fechar', ticket_id: ticketId })
+      });
+      loadSuporte();
+    }
+
+    // ─── INIT ───
+    loadDashboard();
+    loadPedidos();
+    loadSuporte();
+  </script>
+</body>
+</html>

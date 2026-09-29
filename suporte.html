@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suporte - Ateliê da Tá</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    .suporte-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .page-header h1 { color: var(--text-dark); font-size: 1.8rem; }
+
+    .ticket-card { background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; cursor: pointer; }
+    .ticket-assunto { font-weight: 600; color: var(--text-dark); font-size: 1rem; }
+    .ticket-data { color: #999; font-size: 0.8rem; }
+    .badge-aberto { background: #cce5ff; color: #004085; display: inline-block; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; }
+    .badge-fechado { background: #e2e3e5; color: #383d41; display: inline-block; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; }
+
+    .mensagens { margin-top: 1rem; max-height: 300px; overflow-y: auto; }
+    .msg { padding: 0.6rem 1rem; margin: 0.4rem 0; border-radius: 12px; font-size: 0.9rem; max-width: 80%; }
+    .msg-cliente { background: #f0e6f6; margin-right: auto; }
+    .msg-admin { background: #e8f5e9; margin-left: auto; }
+    .msg-meta { font-size: 0.7rem; color: #999; margin-top: 0.2rem; }
+
+    .reply-form { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .reply-form input { flex: 1; padding: 0.7rem 1rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+    .reply-form button { padding: 0.7rem 1.2rem; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 500; }
+
+    .new-ticket { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 2rem; }
+    .new-ticket h3 { margin-bottom: 1rem; color: var(--text-dark); }
+    .new-ticket form { display: flex; flex-direction: column; gap: 0.8rem; }
+    .new-ticket input, .new-ticket textarea { padding: 0.8rem 1rem; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 0.95rem; }
+    .new-ticket textarea { resize: vertical; min-height: 80px; }
+    .new-ticket button { padding: 0.8rem; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 1rem; }
+
+    .hidden { display: none; }
+    .nav-back { display: flex; gap: 0.5rem; }
+    .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; border-radius: 8px; border: none; cursor: pointer; font-family: inherit; font-weight: 500; text-decoration: none; background: #f0f0f0; color: #666; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">Ateliê da Tá</a>
+    <nav>
+      <a href="index.html">Loja</a>
+      <a href="meus-pedidos.html">Pedidos</a>
+    </nav>
+  </header>
+
+  <main class="suporte-container">
+    <div class="page-header">
+      <h1>💬 Suporte</h1>
+      <div class="nav-back">
+        <a href="meus-pedidos.html" class="btn-sm">← Meus Pedidos</a>
+      </div>
+    </div>
+
+    <div class="new-ticket">
+      <h3>Abrir novo chamado</h3>
+      <form id="new-ticket-form">
+        <input type="text" id="assunto" placeholder="Assunto (ex: Dúvida sobre pedido #5)" required>
+        <textarea id="mensagem" placeholder="Descreva sua dúvida ou problema..." required></textarea>
+        <button type="submit">Enviar</button>
+      </form>
+    </div>
+
+    <div id="tickets-list">
+      <p style="text-align:center;color:#999;">Carregando...</p>
+    </div>
+  </main>
+
+  <script>
+    const token = localStorage.getItem('auth_token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!token) { window.location.href = 'login.html'; }
+
+    document.getElementById('new-ticket-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const assunto = document.getElementById('assunto').value;
+      const mensagem = document.getElementById('mensagem').value;
+      const btn = e.target.querySelector('button');
+      btn.disabled = true; btn.textContent = 'Enviando...';
+
+      try {
+        const res = await fetch('/api/suporte', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ acao: 'novo_ticket', assunto, mensagem })
+        });
+        if (res.ok) {
+          document.getElementById('assunto').value = '';
+          document.getElementById('mensagem').value = '';
+          loadTickets();
+        }
+      } catch (err) { alert('Erro ao enviar. Tente novamente.'); }
+      btn.disabled = false; btn.textContent = 'Enviar';
+    });
+
+    async function responder(ticketId) {
+      const input = document.getElementById(`reply-${ticketId}`);
+      if (!input.value.trim()) return;
+      await fetch('/api/suporte', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ acao: 'responder', ticket_id: ticketId, mensagem: input.value })
+      });
+      input.value = '';
+      loadTickets();
+    }
+
+    function renderTicket(t) {
+      const date = new Date(t.criado_em).toLocaleDateString('pt-BR');
+      const msgs = (t.mensagens || []).map(m => `
+        <div class="msg ${m.remetente_role === 'admin' ? 'msg-admin' : 'msg-cliente'}">
+          <div>${m.mensagem}</div>
+          <div class="msg-meta">${m.remetente_nome} · ${new Date(m.criado_em).toLocaleString('pt-BR')}</div>
+        </div>
+      `).join('');
+
+      return `
+        <div class="ticket-card">
+          <div class="ticket-header" onclick="this.nextElementSibling.classList.toggle('hidden')">
+            <div>
+              <span class="ticket-assunto">${t.assunto}</span>
+              <span class="badge-${t.status}">${t.status === 'aberto' ? '🟢 Aberto' : '⚫ Fechado'}</span>
+            </div>
+            <span class="ticket-data">${date}</span>
+          </div>
+          <div class="${t.status === 'fechado' ? 'hidden' : ''}">
+            <div class="mensagens">${msgs}</div>
+            ${t.status === 'aberto' ? `
+              <div class="reply-form">
+                <input type="text" id="reply-${t.id}" placeholder="Escreva sua resposta...">
+                <button onclick="responder(${t.id})">Enviar</button>
+              </div>
+            ` : ''}
+          </div>
+        </div>`;
+    }
+
+    async function loadTickets() {
+      try {
+        const res = await fetch('/api/suporte', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const tickets = await res.json();
+        const container = document.getElementById('tickets-list');
+        if (!tickets.length) {
+          container.innerHTML = '<p style="text-align:center;color:#999;">Nenhum chamado aberto.</p>';
+          return;
+        }
+        container.innerHTML = tickets.map(renderTicket).join('');
+      } catch (err) {
+        document.getElementById('tickets-list').innerHTML = '<p style="text-align:center;color:#999;">Erro ao carregar.</p>';
+      }
+    }
+    loadTickets();
+  </script>
+</body>
+</html>
